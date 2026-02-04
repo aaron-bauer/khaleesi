@@ -30,7 +30,7 @@ git push -u origin main
 4. Connect your GitHub repository
 5. Fill in the details:
    - Name: `valentines-proposal`
-   - Start Command: `python app.py`
+   - Start Command: `gunicorn app:app`
    - Plan: Free
 6. Click "Create Web Service"
 7. Wait 2-3 minutes for deployment
