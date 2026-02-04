@@ -795,6 +795,68 @@
             }
         }
 
+        /* Audio Controls */
+        .audio-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 5000;
+            background: rgba(255, 23, 68, 0.9);
+            padding: 12px 15px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(255, 23, 68, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .audio-controls:hover {
+            background: rgba(255, 23, 68, 1);
+            transform: scale(1.05);
+        }
+
+        .audio-controls button {
+            border: none;
+            background: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0;
+            margin: 0;
+        }
+
+        .music-visualizer {
+            display: flex;
+            gap: 3px;
+            height: 20px;
+            align-items: flex-end;
+        }
+
+        .visualizer-bar {
+            width: 3px;
+            background: white;
+            border-radius: 2px;
+            animation: musicBounce 0.4s ease-in-out;
+        }
+
+        @keyframes musicBounce {
+            0%, 100% { height: 4px; }
+            50% { height: 16px; }
+        }
+
+        /* Music effects during proposal */
+        .music-active .container {
+            animation: musicPulse 0.5s ease-in-out infinite;
+        }
+
+        @keyframes musicPulse {
+            0%, 100% { box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3), 0 20px 80px rgba(255, 23, 68, 0.5), -50px 50px 60px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2); }
+            50% { box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.5), 0 20px 80px rgba(255, 23, 68, 0.7), -50px 50px 60px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3); }
+        }
+
         @media (max-width: 480px) {
             .container {
                 width: 95vw;
@@ -851,7 +913,24 @@
         }
     </style>
 </head>
-<body>    <div class=\"heart-breaking-container\" id=\"heartBreakingContainer\">
+<body>
+    <!-- Audio Player -->
+    <audio id="backgroundMusic" loop>
+        <source src="/static/background-music.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- Audio Controls -->
+    <div class="audio-controls" id="audioControls" onclick="toggleMusic(event)">
+        <button id="musicBtn">♪</button>
+        <div class="music-visualizer" id="musicVisualizer">
+            <div class="visualizer-bar"></div>
+            <div class="visualizer-bar"></div>
+            <div class="visualizer-bar"></div>
+        </div>
+    </div>
+
+    <div class=\"heart-breaking-container\" id=\"heartBreakingContainer\">
         <div class=\"breaking-heart\" id=\"breakingHeart\">❤️</div>
     </div>
 
@@ -919,5 +998,73 @@
     </div>
 
     <script src="proposal.js"></script>
+    <script>
+        // Music control
+        let isPlaying = false;
+        const audio = document.getElementById('backgroundMusic');
+        const musicBtn = document.getElementById('musicBtn');
+        const audioControls = document.getElementById('audioControls');
+        const container = document.getElementById('mainContainer');
+
+        function toggleMusic(event) {
+            event.stopPropagation();
+            if (isPlaying) {
+                audio.pause();
+                musicBtn.textContent = '♪';
+                container.classList.remove('music-active');
+                isPlaying = false;
+            } else {
+                audio.play().catch(() => {
+                    console.log('Audio playback failed. Background music may be blocked by browser.');
+                });
+                musicBtn.textContent = '⏸';
+                container.classList.add('music-active');
+                isPlaying = true;
+                animateVisualizerBars();
+            }
+        }
+
+        function animateVisualizerBars() {
+            if (!isPlaying) return;
+            
+            const bars = document.querySelectorAll('.visualizer-bar');
+            bars.forEach((bar) => {
+                const height = Math.random() * 16 + 4;
+                bar.style.height = height + 'px';
+            });
+            
+            requestAnimationFrame(animateVisualizerBars);
+        }
+
+        // Sync confetti with music beat
+        audio.addEventListener('timeupdate', () => {
+            if (isPlaying) {
+                animateVisualizerBars();
+            }
+        });
+
+        // Auto-play music when page loads
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                audio.play().catch(() => {
+                    console.log('Audio playback failed. Click the music button to play.');
+                });
+                musicBtn.textContent = '⏸';
+                container.classList.add('music-active');
+                isPlaying = true;
+                animateVisualizerBars();
+            }, 500);
+        });
+
+        // Stop music when yes is clicked
+        const originalHandleYes = window.handleYes;
+        window.handleYes = function() {
+            audio.play();
+            musicBtn.textContent = '⏸';
+            isPlaying = true;
+            animateVisualizerBars();
+            originalHandleYes();
+        };
+    </script>
 </body>
 </html>

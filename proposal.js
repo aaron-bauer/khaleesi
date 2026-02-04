@@ -30,6 +30,11 @@ function handleYes() {
 function playCelebrationSounds() {
     // Create visual effects - screen shake and light burst
     const container = document.getElementById('mainContainer');
+    const audio = document.getElementById('backgroundMusic');
+    
+    // Start music
+    audio.currentTime = 0;
+    audio.play().catch(() => console.log('Music playback failed'));
     
     // Shake effect
     for (let i = 0; i < 5; i++) {
@@ -43,8 +48,16 @@ function playCelebrationSounds() {
         container.style.transform = 'translate(0, 0)';
     }, 250);
     
-    // Create fireworks effect
+    // Create fireworks effect synced with beats
     createFireworks();
+    
+    // Create music-synced confetti bursts
+    const musicSyncInterval = setInterval(() => {
+        if (!audio.playing) {
+            clearInterval(musicSyncInterval);
+        }
+        createMusicSyncedConfetti();
+    }, 400); // Sync with music beats (600ms intervals)
 }
 
 // Handle No button - shrinks the container progressively
@@ -117,6 +130,46 @@ function createConfetti() {
         });
         
         // Remove element after animation
+        setTimeout(() => {
+            confetti.remove();
+        }, duration * 1000);
+    }
+}
+
+// Music-synced confetti bursts (smaller bursts in sync with beats)
+function createMusicSyncedConfetti() {
+    const confettiCount = 30;
+    const colors = ['#ff1744', '#ff5252', '#ff6e40', '#ffd700', '#ff69b4'];
+    
+    for (let i = 0; i < confettiCount; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * 100 + '%';
+        confetti.style.top = Math.random() * 30 + '%';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.borderRadius = '50%';
+        confetti.style.width = (3 + Math.random() * 6) + 'px';
+        confetti.style.height = confetti.style.width;
+        
+        document.body.appendChild(confetti);
+        
+        const duration = 1.5 + Math.random();
+        const xMove = (Math.random() - 0.5) * 200;
+        
+        confetti.animate([
+            {
+                transform: 'translateY(0) translateX(0) scale(1)',
+                opacity: 1
+            },
+            {
+                transform: `translateY(${window.innerHeight}px) translateX(${xMove}px) scale(0)`,
+                opacity: 0
+            }
+        ], {
+            duration: duration * 1000,
+            easing: 'ease-out'
+        });
+        
         setTimeout(() => {
             confetti.remove();
         }, duration * 1000);
