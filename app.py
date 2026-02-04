@@ -1,10 +1,10 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from datetime import datetime
 import json
 import os
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='.', static_url_path='')
 CORS(app)
 
 # File to store proposal responses
@@ -25,19 +25,7 @@ def save_responses(responses):
 @app.route('/')
 def index():
     """Serve the index.html file"""
-    return '''
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Valentine's Proposal</title>
-    </head>
-    <body>
-        <h1>Valentine's Proposal Server Running!</h1>
-        <p>Open index.html in your browser to view the proposal.</p>
-        <p>Responses will be logged and stored in proposal_responses.json</p>
-    </body>
-    </html>
-    '''
+    return send_from_directory('.', 'index.html')
 
 @app.route('/proposal', methods=['POST'])
 def handle_proposal():
