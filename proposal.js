@@ -284,3 +284,14 @@ window.addEventListener('load', () => {
     const container = document.querySelector('.container');
     container.style.animation = 'slideUp 0.8s ease-out';
 });
+
+// Add event listeners once the DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    const yesBtn = document.getElementById('yesBtn');
+    const noBtn = document.getElementById('noBtn');
+
+    if (yesBtn && noBtn) {
+        yesBtn.addEventListener('click', handleYes);
+        noBtn.addEventListener('click', handleNo);
+    }
+});
