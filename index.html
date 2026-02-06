@@ -1239,34 +1239,13 @@
         });
 
         // Auto-play music when page loads
+        // The complex auto-play and function override logic has been removed
+        // as it was likely causing issues with browser security policies
+        // and making the buttons unresponsive.
+        // The user should now click the music icon to start the music.
+        // The "Yes" button will also ensure the music is playing.
         window.addEventListener('load', () => {
-            console.log('Page loaded. Audio source:', audio.src);
-            setTimeout(() => {
-                // Start the audio at 15 seconds
-                audio.currentTime = 15;
-                audio.play().catch(() => {
-                    console.log('Auto-play blocked. Click the music button to play.');
-                });
-                musicBtn.textContent = '⏸';
-                container.classList.add('music-active');
-                isPlaying = true;
-                animateVisualizerBars();
-            }, 500);
-
-            // Override handleYes after proposal.js is loaded
-            if (window.handleYes) {
-                const originalHandleYes = window.handleYes;
-                window.handleYes = function () {
-                    // Don't reset audio - just make sure it's playing
-                    if (audio.paused) {
-                        audio.play().catch((e) => console.error('Error playing audio on YES:', e));
-                    }
-                    musicBtn.textContent = '⏸';
-                    isPlaying = true;
-                    animateVisualizerBars();
-                    originalHandleYes();
-                };
-            }
+            console.log("Page loaded. Ready for interaction.");
         });
 
     </script>
