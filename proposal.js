@@ -7,17 +7,21 @@ const maxScaleSteps = 10;
 
 // Handle Yes button click
 function handleYes() {
-    console.log('YES button clicked!');
-    const proposal = document.getElementById('proposal');
-    const successMessage = document.getElementById('successMessage');
-    
-    console.log('Proposal element:', proposal);
-    console.log('Success message element:', successMessage);
-    
-    proposal.style.display = 'none';
-    successMessage.classList.add('show');
-    
-    // Update success message with name
+    try {
+        console.log('YES button clicked!');
+        const proposal = document.getElementById('proposal');
+        const successMessage = document.getElementById('successMessage');
+
+        console.log('Proposal element:', proposal);
+        console.log('Success message element:', successMessage);
+
+        proposal.style.display = 'none';
+        successMessage.classList.add('show');
+
+        // Update success message with name
+    } catch (e) {
+        console.error("Error in handleYes:", e);
+    }
     const successTitle = document.getElementById('successTitle');
     successTitle.textContent = `${personName}, You Make Me The Happiest Person! 🎉`;
     
@@ -27,7 +31,7 @@ function handleYes() {
     playCelebrationSounds();
     
     // Send to backend
-    sendProposalResult('YES');
+    sendProposalResult('YES').catch(e => console.error("Error sending result:", e));
 }
 
 // Play celebration effects
@@ -89,7 +93,7 @@ function handleNo() {
     }
     
     // Send to backend
-    sendProposalResult('NO', noClickCount);
+    sendProposalResult('NO', noClickCount).catch(e => console.error("Error sending result:", e));
 }
 
 // Handle heart click (acts as yes)
