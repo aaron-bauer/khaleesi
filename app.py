@@ -33,6 +33,11 @@ def background_music():
     """Serve the background music file from project root for Render deployments."""
     return send_from_directory('.', 'background-music.mp3')
 
+@app.route('/proposal.js')
+def serve_proposal_js():
+    """Serve the proposal.js file from project root."""
+    return send_from_directory('.', 'proposal.js')
+
 @app.route('/proposal', methods=['POST'])
 def handle_proposal():
     """Handle proposal response"""
